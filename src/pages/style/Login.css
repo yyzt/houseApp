@@ -1,0 +1,27 @@
+.wrapper{
+    width: 70%;
+    margin: 50px auto 0;
+}
+.wrapper .am-flexbox{
+    justify-content: center;
+}
+.wrapper img{
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin-bottom: 20px;
+}
+.wrapper .am-list-item{
+    margin-bottom: 15px;
+}
+.wrapper .am-input-label{
+    width: 50px !important;
+}
+.wrapper .am-flexbox:last-of-type{
+    justify-content: space-between;
+    color:lightgreen;
+}
+.wrapper .am-button{
+    background-color: lightgreen;
+}
+

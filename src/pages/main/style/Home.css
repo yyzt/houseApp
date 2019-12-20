@@ -1,0 +1,29 @@
+#header{
+    height: 50px;
+    background-color: green;
+    justify-content: space-around;
+    align-items: center;
+}
+#header img{
+    width: 25px;
+    height: 25px;
+}
+#header>div:first-of-type{
+    color:white;
+    margin: 0 10px;
+}
+#header>div:last-of-type{
+    color:white;
+    margin: 0 10px;
+}
+#header #search{
+    background: #fff;
+    border-radius: 20px;
+    flex:1;
+    padding: 5px;
+    margin: 0 10px;
+}
+#header #search img{
+   display: block;
+   margin: 0 10px; 
+}
