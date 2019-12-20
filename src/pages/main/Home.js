@@ -3,6 +3,7 @@ import { Flex, Carousel } from 'antd-mobile'
 import './style/Home.css'
 import { withRouter } from 'react-router-dom'
 import { Grid } from 'antd-mobile';
+import { houseList } from '../../apis/axios.js'
 
 const data = [
     {
@@ -52,7 +53,8 @@ class Home extends Component {
         city: '定位中...',
         data: ['1', '2', '3'],
         imgHeight: 176,
-        data1: ['carousel_1.jpg', 'carousel_2.jpg', 'carousel_3.jpg']
+        data1: ['carousel_1.jpg', 'carousel_2.jpg', 'carousel_3.jpg'],
+        list: []
     }
     toCityList = () => {
         this.props.history.push('/CityList');
@@ -64,18 +66,34 @@ class Home extends Component {
         this.props.history.push('/mappages');
     }
 
-    // componentDidMount(){
-    //     window.AMap.plugin('AMap.CitySearch', ()=> {
-    //         var citySearch = new window.AMap.CitySearch()
-    //         citySearch.getLocalCity((status, result)=> {
-    //           if (status === 'complete' && result.info === 'OK') {
-    //             // 查询成功，result即为当前所在城市信息
-    //             const {city} = result;
-    //             this.setState({city});
-    //           }
-    //         })
-    //       })
-    // }
+    getHouseList = () => {
+        houseList()
+            .then((res) => {
+                this.setState({ list: res.data });
+            })
+            .catch((e) => {
+                console.log(e)
+            })
+    }
+
+
+
+
+    componentDidMount() {
+        window.AMap.plugin('AMap.CitySearch', () => {
+            var citySearch = new window.AMap.CitySearch()
+            citySearch.getLocalCity((status, result) => {
+                if (status === 'complete' && result.info === 'OK') {
+                    // 查询成功，result即为当前所在城市信息
+                    const { city } = result;
+                    this.setState({ city });
+                }
+            })
+        })
+        this.getHouseList();
+    }
+
+
 
     render() {
         return (
@@ -85,7 +103,7 @@ class Home extends Component {
                     <div onClick={this.toCityList}>{this.state.city} ▼</div>
                     <Flex id="search" onClick={this.toSearch}>
                         <img src={require('../../assets/images/search.png')} alt="" />
-                        <span style={{fontSize:12}}>挑好房，上源码房产APP</span>
+                        <span style={{ fontSize: 12 }}>挑好房，上源码房产APP</span>
                     </Flex>
                     <div>
                         <img src={require('../../assets/images/map.png')} onClick={this.toMap} alt="" />
@@ -121,27 +139,34 @@ class Home extends Component {
                 <Grid data={data} onClick={_el => console.log(_el)} />
 
                 <div>
-                    <p style={{margin:10}}>猜你喜欢</p>
-                    <Flex>
-                        <img src={require('../../assets/images/new_house.png')} style={{weight:100,height:100}}/>
-                        <Flex style={{flex:1,justifyContent:'space-between',padding:10}}>
-                            <div style={{fontSize:14}}>
-                                <p style={{fontSize:20,fontWeight:'bold',margin:'10 0'}}>绿地锦天府</p>
-                                <Flex style={{margin:'10px 0'}}>
-                                    <p>锦江区</p> 
-                                    <p>&emsp;攀成钢</p>
-                                </Flex>
-                                <Flex  style={{margin:'10px 0'}}>
-                                    <p>锦江区</p> 
-                                    <p> &emsp;攀成钢</p>
-                                </Flex>
-                            </div>
-                            <p style={{color:'red',fontWeight:'bold'}}>
-                                1900/平
-                            </p>
+                    <p style={{ margin: 10 }}>猜你喜欢</p>
 
-                        </Flex>
-                    </Flex>
+                    {
+                        this.state.list.map((item) => {
+                            return (
+                                <Flex key={item.id}>
+                                    <img src={item.pic} style={{ weight: 100, height: 100 }} />
+                                    <Flex style={{ flex: 1, justifyContent: 'space-between', padding: 10 }}>
+                                        <div style={{ fontSize: 14 }}>
+                                            <p style={{ fontSize: 20, fontWeight: 'bold', margin: '10 0' }}>{item.name}</p>
+                                            <Flex style={{ margin: '10px 0' }}>
+                                                <p>{item.address}</p>
+                                            </Flex>
+                                            <Flex style={{ margin: '10px 0' }}>
+                                                <p>2室2厅2卫</p>
+                                            </Flex>
+                                        </div>
+                                        <p style={{ color: 'red', fontWeight: 'bold' }}>
+                                            {item.price}/平
+                                        </p>
+
+                                    </Flex>
+                                </Flex>
+                            )
+
+                        })
+
+                    }
                 </div>
             </div>
         )
