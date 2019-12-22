@@ -3,7 +3,13 @@ import { Flex, Carousel } from 'antd-mobile'
 import './style/Home.css'
 import { withRouter } from 'react-router-dom'
 import { Grid } from 'antd-mobile';
-import { houseList } from '../../apis/axios.js'
+import { getHouseList } from '../../apis/axios.js'
+
+// redux
+import {connect} from 'react-redux'
+import {addHistory} from '../../store.js'
+
+import HouseList from '../../components/HouseList.js'
 
 const data = [
     {
@@ -66,8 +72,18 @@ class Home extends Component {
         this.props.history.push('/mappages');
     }
 
-    getHouseList = () => {
-        houseList()
+
+    addHistory = (item)=>{
+        this.props.dispatch(addHistory(item))
+}
+    // addHistory = (item)=>{
+    //     alert('我看了哦');
+    //     console.log('item',item)
+    //     this.props.dispatch(addHistory(item));
+    // }
+
+    getHouseList1 = () => {
+        getHouseList()
             .then((res) => {
                 this.setState({ list: res.data });
             })
@@ -90,12 +106,13 @@ class Home extends Component {
                 }
             })
         })
-        this.getHouseList();
+        this.getHouseList1();
     }
 
 
 
     render() {
+        
         return (
             <div>
 
@@ -136,7 +153,7 @@ class Home extends Component {
                     </Carousel>
                 </div>
 
-                <Grid data={data} onClick={_el => console.log(_el)} />
+                <Grid data={data}/>
 
                 <div>
                     <p style={{ margin: 10 }}>猜你喜欢</p>
@@ -144,24 +161,25 @@ class Home extends Component {
                     {
                         this.state.list.map((item) => {
                             return (
-                                <Flex key={item.id}>
-                                    <img src={item.pic} style={{ weight: 100, height: 100 }} />
-                                    <Flex style={{ flex: 1, justifyContent: 'space-between', padding: 10 }}>
-                                        <div style={{ fontSize: 14 }}>
-                                            <p style={{ fontSize: 20, fontWeight: 'bold', margin: '10 0' }}>{item.name}</p>
-                                            <Flex style={{ margin: '10px 0' }}>
-                                                <p>{item.address}</p>
-                                            </Flex>
-                                            <Flex style={{ margin: '10px 0' }}>
-                                                <p>2室2厅2卫</p>
-                                            </Flex>
-                                        </div>
-                                        <p style={{ color: 'red', fontWeight: 'bold' }}>
-                                            {item.price}/平
-                                        </p>
+                                <HouseList onClick={this.addHistory} item={item} key={item.id}/>
+                                // <Flex key={item.id}>
+                                //     <img src={item.pic} style={{ weight: 100, height: 100 }} />
+                                //     <Flex style={{ flex: 1, justifyContent: 'space-between', padding: 10 }}>
+                                //         <div style={{ fontSize: 14 }}>
+                                //             <p style={{ fontSize: 20, fontWeight: 'bold', margin: '10 0' }}>{item.name}</p>
+                                //             <Flex style={{ margin: '10px 0' }}>
+                                //                 <p>{item.address}</p>
+                                //             </Flex>
+                                //             <Flex style={{ margin: '10px 0' }}>
+                                //                 <p>2室2厅2卫</p>
+                                //             </Flex>
+                                //         </div>
+                                //         <p style={{ color: 'red', fontWeight: 'bold' }}>
+                                //             {item.price}/平
+                                //         </p>
 
-                                    </Flex>
-                                </Flex>
+                                //     </Flex>
+                                // </Flex>
                             )
 
                         })
@@ -173,4 +191,11 @@ class Home extends Component {
     }
 }
 
-export default withRouter(Home);
+const mapStateToProps = (state)=>{
+    return {
+        city:state.city
+    }
+}
+
+// export default withRouter(Home);
+export default connect(mapStateToProps)(withRouter(Home))
